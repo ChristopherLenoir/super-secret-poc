@@ -1,0 +1,38 @@
+<p>
+  <button (click)="openAddEffectDialog()">Add effect</button>
+</p>
+<div cdkDropList cdkDropListOrientation="horizontal" class="example-list" (cdkDropListDropped)="drop($event)">
+  <div
+    class="example-box"
+    *ngFor="let effect of channelStripService.channelStrip.effects; let effectIndex = index"
+    cdkDrag
+  >
+  <div class="example-handle" cdkDragHandle>
+    <svg width="24px" fill="currentColor" viewBox="0 0 24 24">
+      <path
+      d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"
+      ></path>
+      <path d="M0 0h24v24H0z" fill="none"></path>
+    </svg>
+  </div>
+  <button (click)="channelStripService.removeEffect(effectIndex)">x</button>
+
+    <div>
+      {{ effect.name }}
+    </div>
+
+    <!-- <div>component</div> -->
+    <!-- <p>{{ effectIndex | json }}</p> -->
+    <app-filter-effect
+      *ngIf="effect.name == 'Filter'"
+      [effect]="effect"
+      [effectIndex]="effectIndex"
+    ></app-filter-effect>
+    <app-visualizer-effect
+      *ngIf="effect.name == 'Visualizer'"
+      [effect]="effect"
+      [effectIndex]="effectIndex"
+    ></app-visualizer-effect>
+    <app-gate-effect *ngIf="effect.name == 'Gate'" [effect]="effect" [effectIndex]="effectIndex"> </app-gate-effect>
+  </div>
+</div>

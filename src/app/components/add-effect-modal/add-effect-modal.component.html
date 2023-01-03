@@ -1,0 +1,9 @@
+<mat-selection-list #effects [multiple]="false">
+  <mat-list-option *ngFor="let effectType of typesOfEffects" [value]="effectType">
+    {{ effectType }}
+  </mat-list-option>
+</mat-selection-list>
+
+<button mat-button (click)="returnEffectNameToCreate(effects.selectedOptions.selected[0]?.value)">Add effect</button>
+
+<!-- <p>Option selected: {{ effects.selectedOptions.selected[0]?.value }}</p> -->

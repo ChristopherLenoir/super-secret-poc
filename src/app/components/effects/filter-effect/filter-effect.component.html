@@ -1,0 +1,45 @@
+<div id="canvas-container">
+  <canvas id="filter-canvas" #filterCanvas></canvas>
+</div>
+<div>
+  <p>Filter type :</p>
+  <mat-form-field appearance="fill">
+    <mat-label>{{ effect.type }}</mat-label>
+    <mat-select (selectionChange)="onFilterTypeChange($event)">
+      <mat-option *ngFor="let filterType of filterTypes" [value]="filterType">
+        {{ filterType }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <p>Cutoff frequency : {{ effect.frequency.value }}</p>
+  <mat-slider
+    (input)="onFrequencyChange($event)"
+    min="22"
+    max="20000"
+    step="0.01"
+    [value]="effect.frequency.value"
+    aria-label="Cutoff frequency"
+  ></mat-slider>
+</div>
+<div>
+  <p>Q : {{ effect.Q.value }}</p>
+  <mat-slider
+    (input)="onQChange($event)"
+    min="0"
+    max="20"
+    step="0.01"
+    [value]="effect.Q.value"
+    aria-label="Q"
+  ></mat-slider>
+</div>
+<div>
+  <p>Gain : {{ effect.gain.value }}</p>
+  <mat-slider
+    (input)="onQChange($event)"
+    min="-64"
+    max="64"
+    step="0.01"
+    [value]="effect.gain.value"
+    aria-label="Gain"
+  ></mat-slider>
+</div>

@@ -1,0 +1,11 @@
+#cool-container {
+  display: flex;
+  // width: 200px;
+  #slider-container {
+    display: inline-block;
+    padding: 8px;
+  }
+  #canvas-container {
+    display: inline-block;
+  }
+}

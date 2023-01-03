@@ -1,0 +1,14 @@
+<div id="cool-container">
+  <mat-slider
+    (input)="onThresholdChange($event)"
+    id="gate-slider"
+    vertical
+    min="-64"
+    max="0"
+    step="0.1"
+    value="-12"
+  ></mat-slider>
+  <div id="canvas-container">
+    <canvas id="gate-canvas" #gateCanvas></canvas>
+  </div>
+</div>

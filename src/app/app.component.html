@@ -1,0 +1,15 @@
+<app-navigation>
+  <main class="">
+    <div class="" *ngIf="!(currentFileService.isThereAFileSelected$ | async)">
+      <p>Select a file to proceed</p>
+    </div>
+    <div class="" *ngIf="currentFileService.isThereAFileSelected$ | async">
+      <app-file-audio-player></app-file-audio-player>
+    </div>
+    <div class="">
+      <p>Audio processing channel strip</p>
+      <app-file-audio-channel></app-file-audio-channel>
+    </div>
+  </main>
+  <!-- <router-outlet></router-outlet> -->
+</app-navigation>
