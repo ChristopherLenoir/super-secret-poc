@@ -1,5 +1,6 @@
 import { Effect } from '../../types/abstractClasses';
 import { GateOptions } from '../../types/interfaces';
+import { clamp } from '../../utils';
 import { gateModuleScript } from './audioWorklets';
 
 /**
@@ -31,12 +32,16 @@ export class Gate extends Effect<GateOptions> {
     this._visualizerNode = new AnalyserNode(this._context, {});
     // this._freqs = new Uint8Array(this._visualizerNode.frequencyBinCount);
     this._times = new Uint8Array(this._visualizerNode.frequencyBinCount);
+    this._wetChannel.addEffect(this._visualizerNode);
 
     const scriptUrl: string = URL.createObjectURL(new Blob([gateModuleScript], { type: 'text/javascript' }));
 
     this._context.audioWorklet.addModule(scriptUrl).then(() => {
-      this._gateNode = new AudioWorkletNode(this._context, 'gate-processor');
-      this._gateNode.parameters['threshold'] = this.options.threshold;
+      this._gateNode = new AudioWorkletNode(this._context, 'gate-processor', {
+        processorOptions: {
+          threshold: this.options.threshold
+        }
+      });
 
       this._wetChannel.addEffect(this._gateNode);
     });
@@ -50,7 +55,23 @@ export class Gate extends Effect<GateOptions> {
     return this._times;
   }
 
+  get threshold(): number {
+    return this.options.threshold;
+  }
+
   setThreshold(value: number) {
-    this._gateNode.parameters['threshold'] = value;
+    console.log('setThreshold value : ', value);
+    this._updateOptions({
+      threshold: clamp(value, 0, 1)
+    });
+    console.log('setThreshold this.options.threshold : ', this.options.threshold);
+
+    this._wetChannel.removeEffect(this._gateNode);
+    this._gateNode = new AudioWorkletNode(this._context, 'gate-processor', {
+      processorOptions: {
+        threshold: this.options.threshold
+      }
+    });
+    this._wetChannel.addEffect(this._gateNode);
   }
 }

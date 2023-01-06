@@ -86,7 +86,7 @@ export class ChannelStrip extends Channel {
    *
    * @param {Effect<EffectOptions> | number}   effect   The effect you want to remove from the channelStrip.
    */
-  removeEffect(effect: Effect<EffectOptions> | number): void {
+  removeEffect(effect: (Effect<EffectOptions> | AudioNode) | number): void {
     if (typeof effect === 'number') {
       this._effects.splice(effect, 1);
     } else {

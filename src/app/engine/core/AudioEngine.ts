@@ -1,6 +1,7 @@
 import { Effect } from '../types/abstractClasses';
 import { EffectsNames } from '../types/enums';
 import {
+  CompressorOptions,
   DistortionOptions,
   EffectOptions,
   FilterOptions,
@@ -13,6 +14,7 @@ import {
 import { Dic, SoundFilesLibrary } from '../types/types';
 import { ChannelStrip, MixChannel } from './channels';
 import { Delay, Distortion, Filter, Gate, Pan, Reverb, Visualizer } from './effects';
+import { Compressor } from './effects/Compressor';
 import { AudioInput } from './instruments';
 import { SoundPlayer } from './SoundPlayer.class';
 
@@ -290,6 +292,7 @@ export class AudioEngine {
   createEffect(effectType: 'Reverb', options?: ReverbOptions): Reverb;
   createEffect(effectType: 'Visualizer', options?: VisualizerOptions): Visualizer;
   createEffect(effectType: 'Gate', options?: GateOptions): Gate;
+  createEffect(effectType: 'Compressor', options?: CompressorOptions): Compressor;
   createEffect(effectType: EffectsNames, options: EffectOptions = {}): Effect<EffectOptions> {
     // if (effectType === '_3BandEQ') {
     //   return new _3BandEQ(this._masterContext, options);
@@ -308,6 +311,8 @@ export class AudioEngine {
       return new Visualizer(this._masterContext, options);
     } else if (effectType === 'Gate') {
       return new Gate(this._masterContext, options);
+    } else if (effectType === 'Compressor') {
+      return new Compressor(this._masterContext, options);
     } else {
       return new Pan(this._masterContext, options);
     }

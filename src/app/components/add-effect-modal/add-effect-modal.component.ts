@@ -8,7 +8,7 @@ import { EffectsNames } from '../../engine/types/enums';
   styleUrls: ['./add-effect-modal.component.scss']
 })
 export class AddEffectModalComponent implements OnInit {
-  typesOfEffects: EffectsNames[] = ['Distortion', 'Visualizer', 'Gate', 'Filter'];
+  typesOfEffects: EffectsNames[] = ['Visualizer', 'Gate', 'Filter', 'Compressor'];
 
   constructor(public dialogRef: MatDialogRef<AddEffectModalComponent>, @Inject(MAT_DIALOG_DATA) public data: {}) {}
 

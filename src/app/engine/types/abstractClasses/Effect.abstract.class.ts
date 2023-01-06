@@ -135,7 +135,23 @@ export abstract class Effect<OT extends EffectOptions> extends HasOptions<OT> {
           dryWet: 1,
           gain: 1,
 
-          threshold: 0.5
+          // threshold: 0.25
+          threshold: 0.025
+        },
+        ...options
+      });
+    } else if (name === 'Compressor') {
+      this._updateOptions<EffectOptions>({
+        ...{
+          muted: false,
+          dryWet: 1,
+          gain: 1,
+
+          threshold: -24,
+          attack: 0.003,
+          knee: 30,
+          ratio: 12,
+          release: 0.25
         },
         ...options
       });

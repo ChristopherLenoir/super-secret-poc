@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { SoundPlayer } from '../../engine/core/SoundPlayer.class';
+import { SoundFile } from '../../engine/types/interfaces';
 import { AudioEngineService } from '../audio-engine/audio-engine.service';
 
 @Injectable({
@@ -8,42 +9,43 @@ import { AudioEngineService } from '../audio-engine/audio-engine.service';
 })
 export class CurrentFileService {
   private _isThereAFileSelectedSubject$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  private _currentFileSubject$: BehaviorSubject<File> = new BehaviorSubject<File>({} as File);
+  private _currentFileSubject$: BehaviorSubject<SoundFile> = new BehaviorSubject<SoundFile>({} as SoundFile);
 
   // private _audioEngine: AudioEngine = new AE.AudioEngine();
   private _soundPlayer: SoundPlayer = this.audioEngineService.audioEngine.createSoundPlayer('soundPlayer', {});
 
   constructor(private audioEngineService: AudioEngineService) {}
 
-  private get _currentFile() {
+  private get _currentFile(): SoundFile {
     return this._currentFileSubject$.getValue();
   }
 
-  private set _currentFile(value: File) {
+  private set _currentFile(value: SoundFile) {
     this._currentFileSubject$.next(value);
   }
 
-  public get currentFile$(): Observable<File> {
+  public get currentFile$(): Observable<SoundFile> {
     return this._currentFileSubject$.asObservable();
   }
 
   // TO DO : remove file from array ( file and audio ) when removing a file from the app file list
 
-  public async setCurrentFile(file: File): Promise<void> {
+  public async setCurrentFile(file: SoundFile): Promise<void> {
     this._soundPlayer.stopSounds();
 
     this._currentFile = file;
     // this._soundPlayer = this.audioEngineService.audioEngine.createSoundPlayer('soundPlayer', {
-    //   [this._currentFile.name]: {
+    //   [this._currentFile.file.name]: {
     //     file: file,
     //     type: 'oneShot',
     //     volume: 1
     //   }
     // });
-    this._soundPlayer.addSoundToLibrary(this._currentFile.name, {
-      file: file,
+    this._soundPlayer.addSoundToLibrary(this._currentFile.file.name, {
+      file: this._currentFile.file,
       type: 'oneShot',
-      volume: 1
+      volume: 1,
+      audioBuffer: this._currentFile.audioBuffer
     });
     this._soundPlayer.connect(this.audioEngineService.audioEngine.getChannelStrip('processing').input);
 
@@ -68,34 +70,38 @@ export class CurrentFileService {
   }
 
   // public async getSoundCursor(): Promise<Observable<number>> {
-  //   return this._soundPlayer.getSoundCursor(this._currentFile.name);
+  //   return this._soundPlayer.getSoundCursor(this._currentFile.file.name);
   // }
 
-  public async getSoundDuration(): Promise<number> {
-    return this._soundPlayer.getSoundDuration(this._currentFile.name);
+  public getSoundDuration(): number {
+    return this._soundPlayer.getSoundDuration(this._currentFile.file.name);
   }
 
-  public async getStartedAt(): Promise<number> {
-    return this._soundPlayer.getStartedAt(this._currentFile.name);
+  public getStartedAt(): number {
+    return this._soundPlayer.getStartedAt(this._currentFile.file.name);
   }
 
-  public async getPlaybackRate(): Promise<number> {
-    return this._soundPlayer.getPlaybackRate(this._currentFile.name);
+  public getPausedAt(): number {
+    return this._soundPlayer.getPausedAt(this._currentFile.file.name);
   }
 
-  public async getAudioBuffer(): Promise<AudioBuffer> {
-    return this._soundPlayer.getSoundBuffer(this._currentFile.name);
+  public getPlaybackRate(): number {
+    return this._soundPlayer.getPlaybackRate(this._currentFile.file.name);
+  }
+
+  public getAudioBuffer(): AudioBuffer {
+    return this._soundPlayer.getSoundBuffer(this._currentFile.file.name);
   }
 
   play() {
-    this._soundPlayer.playSound(this._currentFile.name);
+    this._soundPlayer.playSound(this._currentFile.file.name);
   }
 
   pause() {
-    this._soundPlayer.pauseSound(this._currentFile.name);
+    this._soundPlayer.pauseSound(this._currentFile.file.name);
   }
 
   stop() {
-    this._soundPlayer.stopSound(this._currentFile.name);
+    this._soundPlayer.stopSound(this._currentFile.file.name);
   }
 }

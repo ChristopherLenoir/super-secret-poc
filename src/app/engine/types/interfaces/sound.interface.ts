@@ -1,3 +1,4 @@
+import { BehaviorSubject } from 'rxjs';
 import { SoundType } from '../enums';
 
 /**
@@ -14,4 +15,23 @@ export interface SoundFile {
   file: File;
   type: SoundType;
   volume: number;
+  audioBuffer: AudioBuffer;
+}
+
+/**
+ * Summary. (A channel to handle single/multiple effects)
+ *
+ * Description. (A channel to handle single/multiple effects)
+ *
+ */
+export interface CustomAudioStructure {
+  bufferSourceNode: AudioBufferSourceNode;
+  duration: number;
+  cursor: BehaviorSubject<number>;
+  startedAt: number;
+  pausedAt: number;
+  elapsed: number;
+  isPlaying: boolean;
+  // htmlAudioElement: HTMLAudioElement;
+  // mediaElementAudioSourceNode: MediaElementAudioSourceNode;
 }

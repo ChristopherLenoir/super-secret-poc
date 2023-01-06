@@ -18,6 +18,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AddEffectModalComponent } from './components/add-effect-modal/add-effect-modal.component';
+import { CompressorEffectComponent } from './components/effects/compressor-effect/compressor-effect.component';
 import { FilterEffectComponent } from './components/effects/filter-effect/filter-effect.component';
 import { GateEffectComponent } from './components/effects/gate-effect/gate-effect.component';
 import { VisualizerEffectComponent } from './components/effects/visualizer-effect/visualizer-effect.component';
@@ -36,7 +37,8 @@ import { NavigationComponent } from './components/navigation/navigation.componen
     AddEffectModalComponent,
     VisualizerEffectComponent,
     FilterEffectComponent,
-    GateEffectComponent
+    GateEffectComponent,
+    CompressorEffectComponent
   ],
   imports: [
     // AddEffectDialogModule,

@@ -14,7 +14,8 @@ export class VisualizerEffectComponent implements OnInit, AfterViewInit {
   @Input() effectIndex: number;
 
   duration: number = 0;
-  canvasWidth: number = 300;
+  // canvasWidth: number = 300;
+  canvasWidth: number = 250;
   canvasHeight: number = 128;
   requestAnimationFrameId: number;
 

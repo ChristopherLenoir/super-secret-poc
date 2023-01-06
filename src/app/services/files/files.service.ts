@@ -1,26 +1,53 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { SoundFile } from '../../engine/types/interfaces';
+import { getSoundFileAudioBuffer } from '../../engine/utils';
 import { FileSystemFileHandle } from '../../types';
+import { AudioEngineService } from '../audio-engine/audio-engine.service';
 import { CurrentFileService } from '../current-file/current-file.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FilesService {
-  private _filesSubject$: BehaviorSubject<File[]>;
+  private _filesSubject$: BehaviorSubject<SoundFile[]>;
 
-  constructor(private currentFileService: CurrentFileService) {
-    this._filesSubject$ = new BehaviorSubject<File[]>([]);
+  constructor(private audioEngineService: AudioEngineService, private currentFileService: CurrentFileService) {
+    this._filesSubject$ = new BehaviorSubject<SoundFile[]>([]);
   }
   private get _files() {
     return this._filesSubject$.getValue();
   }
 
-  private set _files(value: File[]) {
-    this._filesSubject$.next(value);
+  private async _setFiles(value: File[]) {
+    const soundFiles: SoundFile[] = await Promise.all(
+      value.map(async file => {
+        return {
+          file: file,
+          type: 'loop',
+          volume: 1,
+          audioBuffer: await getSoundFileAudioBuffer(this.audioEngineService.audioEngine.masterContext, file)
+        } as SoundFile;
+      })
+    );
+    this._filesSubject$.next(soundFiles);
   }
 
-  public get $files(): Observable<File[]> {
+  private async _addFiles(value: File[]) {
+    const soundFiles: SoundFile[] = await Promise.all(
+      value.map(async file => {
+        return {
+          file: file,
+          type: 'loop',
+          volume: 1,
+          audioBuffer: await getSoundFileAudioBuffer(this.audioEngineService.audioEngine.masterContext, file)
+        } as SoundFile;
+      })
+    );
+    this._filesSubject$.next([...this._files, ...soundFiles]);
+  }
+
+  public get $files(): Observable<SoundFile[]> {
     return this._filesSubject$.asObservable();
   }
 
@@ -68,7 +95,7 @@ export class FilesService {
         })
       );
 
-      this._files = [...this._files, ...filesToAdd];
+      await this._addFiles(filesToAdd);
     }
 
     // // Fallback if the File System Access API is not supported.
@@ -101,7 +128,12 @@ export class FilesService {
     // });
   }
 
-  selectImportedFile(file: File) {
-    this.currentFileService.setCurrentFile(file);
+  async selectImportedFile(file: File): Promise<void> {
+    this.currentFileService.setCurrentFile({
+      file: file,
+      type: 'oneShot',
+      volume: 1,
+      audioBuffer: await getSoundFileAudioBuffer(this.audioEngineService.audioEngine.masterContext, file)
+    });
   }
 }

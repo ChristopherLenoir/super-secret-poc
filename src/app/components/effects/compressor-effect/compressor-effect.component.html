@@ -1,0 +1,52 @@
+<div id="cool-container">
+  <div id="canvas-container">
+    <canvas id="compressor-canvas" #compressorCanvas></canvas>
+  </div>
+</div>
+<div>
+  <p>Threshold : {{ effect.threshold }}</p>
+  <mat-slider
+    (input)="onThresholdChange($event)"
+    min="-100"
+    max="0"
+    step="0.01"
+    [value]="effect.threshold"
+    aria-label="Threshold"
+  ></mat-slider>
+  <p>Attack : {{ effect.attack }}</p>
+  <mat-slider
+    (input)="onAttackChange($event)"
+    min="0"
+    max="1"
+    step="0.01"
+    [value]="effect.attack"
+    aria-label="Attack"
+  ></mat-slider>
+  <p>Knee : {{ effect.knee }}</p>
+  <mat-slider
+    (input)="onKneeChange($event)"
+    min="0"
+    max="40"
+    step="0.01"
+    [value]="effect.knee"
+    aria-label="Knee"
+  ></mat-slider>
+  <p>Ratio : {{ effect.ratio }}</p>
+  <mat-slider
+    (input)="onRatioChange($event)"
+    min="1"
+    max="20"
+    step="0.01"
+    [value]="effect.ratio"
+    aria-label="Ratio"
+  ></mat-slider>
+  <p>Release : {{ effect.release }}</p>
+  <mat-slider
+    (input)="onReleaseChange($event)"
+    min="0"
+    max="1"
+    step="0.01"
+    [value]="effect.release"
+    aria-label="Release"
+  ></mat-slider>
+</div>

@@ -7,6 +7,8 @@
   <button (click)="stop()">Stop</button>
   <div id="canvas-container" #canvasContainer>
     <canvas id="amplitude-canvas" #amplitudeCanvas></canvas>
+    <br />
+    <canvas id="spectrogram-canvas" #spectrogramCanvas></canvas>
   </div>
   <p *ngIf="currentFileService.currentFile$ | async">
     <!-- {{ currentFileService.getSoundCursor() | async | async }} -->

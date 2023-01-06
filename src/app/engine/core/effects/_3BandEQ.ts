@@ -87,9 +87,9 @@ export class _3BandEQ extends Effect<_3BandEQOptions> {
    */
   setLowMidFrequencyBreakpoint(value: number) {
     this._updateOptions({
-      breakPoints: { ...this.options.breakPoints, lowMid: value }
+      breakPoints: { ...this.options.breakPoints, lowMid: clamp(value, 0, this.options.breakPoints.midHigh) }
     });
-    this.options.breakPoints.lowMid = clamp(value, 0, this.options.breakPoints.midHigh);
+    // this.options.breakPoints.lowMid = clamp(value, 0, this.options.breakPoints.midHigh);
     this._lowFilterNode.frequency.value = this.options.breakPoints.lowMid;
     this._midLowFilterNode.frequency.value = (this.options.breakPoints.lowMid + this.options.breakPoints.midHigh) / 2;
   }

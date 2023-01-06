@@ -17,20 +17,33 @@
 
 export const gateModuleScript = `
 class GateProcessor extends AudioWorkletProcessor {
+  constructor(options) {
+    super();
+    console.log("options : ", options);
+
+    this.threshold = options.processorOptions.threshold;
+  }
+
   process (inputs, outputs, parameters) {
-    console.log("parameters.threshold : ", parameters.threshold)
-    const input = inputs[0]
-    const output = outputs[0]
-      output.forEach(channel => {
-        for (let i = 0; i < channel.length; i++) {
-          // channel[i] = Math.random() - 0.5
-          output[i] =
-          input[i] > parameters.threshold
-           ? input[i]
-           : 0;
-        }
-      })
-    return true
+    // console.log("-----------------")
+    // console.log("this.threshold : ", this.threshold)
+    // By default, the node has single input and output.
+    const input = inputs[0];
+    const output = outputs[0];
+
+    for (let channel = 0; channel < output.length; ++channel) {
+      // console.log("input[channel] : ", input[channel])
+
+      if(input[channel] && input[channel].length > 0) {
+        const processedChannel = input[channel].map((value) => {
+          return Math.abs(value) >= this.threshold ? value : 0;
+          // return Math.random() * 2 - 1;
+        })
+        output[channel].set(processedChannel);
+      }
+    }
+
+    return true;
   }
 }
 

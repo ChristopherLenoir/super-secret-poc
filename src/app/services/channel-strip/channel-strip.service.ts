@@ -18,11 +18,10 @@ export class ChannelStripService {
   constructor(private audioEngineService: AudioEngineService) {
     this._channelStrip = this.audioEngineService.audioEngine.createChannelStrip('processing', []);
 
-    // this.addEffect('Delay');
-    // this.addEffect('Distortion');
     // this.addEffect('Gate');
-    this.addEffect('Filter');
-    this.addEffect('Visualizer');
+    // this.addEffect('Filter');
+    // this.addEffect('Compressor');
+    // this.addEffect('Visualizer');
   }
 
   public get channelStrip() {
@@ -46,6 +45,9 @@ export class ChannelStripService {
         effect = this.audioEngineService.audioEngine.createEffect(effectName);
         break;
       case 'Gate':
+        effect = this.audioEngineService.audioEngine.createEffect(effectName);
+        break;
+      case 'Compressor':
         effect = this.audioEngineService.audioEngine.createEffect(effectName);
         break;
 
