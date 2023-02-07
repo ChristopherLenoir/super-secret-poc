@@ -16,6 +16,8 @@ export interface SoundFile {
   type: SoundType;
   volume: number;
   audioBuffer: AudioBuffer;
+  processedWaveForm: ProcessedWaveForm;
+  remappedData: number[][];
 }
 
 /**
@@ -34,4 +36,16 @@ export interface CustomAudioStructure {
   isPlaying: boolean;
   // htmlAudioElement: HTMLAudioElement;
   // mediaElementAudioSourceNode: MediaElementAudioSourceNode;
+}
+
+export interface ProcessedWaveForm {
+  channel: Uint8Array;
+  channelDbRange: {
+    minDecibels: number;
+    maxDecibels: number;
+  };
+  stride: number;
+  tickCount: number;
+  maxFreq: number;
+  duration: number;
 }

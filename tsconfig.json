@@ -2,10 +2,10 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "strict": false,
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
-    "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
@@ -25,12 +25,15 @@
     "useUnknownInCatchVariables": false,
     "strictPropertyInitialization": false,
     "noImplicitAny": false,
-    "strictNullChecks": false
+    "strictNullChecks": false,
+    "paths": {
+      "crypto": ["node_modules/crypto-js"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
-    "strictInjectionParameters": true,
-    "strictInputAccessModifiers": true,
+    "strictInjectionParameters": false,
+    "strictInputAccessModifiers": false,
     "strictTemplates": false
   }
 }

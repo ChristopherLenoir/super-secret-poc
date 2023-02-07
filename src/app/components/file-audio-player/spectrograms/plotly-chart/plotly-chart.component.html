@@ -1,0 +1,9 @@
+<div id="canvas-container" #canvasContainer>
+  <plotly-plot
+    *ngIf="isPlotlySetUp"
+    [data]="plotlyGraph.data"
+    [layout]="plotlyGraph.layout"
+    [config]="plotlyGraph.config"
+    [updateOnDataChange]="true"
+  ></plotly-plot>
+</div>

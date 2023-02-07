@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { SoundFile } from '../../engine/types/interfaces';
-import { getSoundFileAudioBuffer } from '../../engine/utils';
+import { getSoundFileAudioBuffer, processWaveForm, remapDataToTwoDimensionalMatrix } from '../../engine/utils';
 import { FileSystemFileHandle } from '../../types';
 import { AudioEngineService } from '../audio-engine/audio-engine.service';
 import { CurrentFileService } from '../current-file/current-file.service';
@@ -19,32 +19,82 @@ export class FilesService {
     return this._filesSubject$.getValue();
   }
 
-  private async _setFiles(value: File[]) {
-    const soundFiles: SoundFile[] = await Promise.all(
-      value.map(async file => {
-        return {
-          file: file,
-          type: 'loop',
-          volume: 1,
-          audioBuffer: await getSoundFileAudioBuffer(this.audioEngineService.audioEngine.masterContext, file)
-        } as SoundFile;
-      })
+  async selectImportedFile(file: File): Promise<void> {
+    const audioBuffer: AudioBuffer = await getSoundFileAudioBuffer(
+      this.audioEngineService.audioEngine.masterContext,
+      file
     );
-    this._filesSubject$.next(soundFiles);
+    const processedWaveForm = await processWaveForm(audioBuffer);
+    this.currentFileService.setCurrentFile({
+      file: file,
+      type: 'oneShot',
+      volume: 1,
+      audioBuffer: audioBuffer,
+      processedWaveForm: processedWaveForm,
+      remappedData: remapDataToTwoDimensionalMatrix(
+        processedWaveForm.channel,
+        processedWaveForm.stride,
+        processedWaveForm.tickCount
+      ).slice(0, processedWaveForm.stride / 2)
+    });
   }
 
-  private async _addFiles(value: File[]) {
-    const soundFiles: SoundFile[] = await Promise.all(
-      value.map(async file => {
-        return {
-          file: file,
-          type: 'loop',
-          volume: 1,
-          audioBuffer: await getSoundFileAudioBuffer(this.audioEngineService.audioEngine.masterContext, file)
-        } as SoundFile;
-      })
-    );
-    this._filesSubject$.next([...this._files, ...soundFiles]);
+  private async _setFiles(files: File[]) {
+    for (let i = 0; i < files.length; i++) {
+      const audioBuffer: AudioBuffer = await getSoundFileAudioBuffer(
+        this.audioEngineService.audioEngine.masterContext,
+        files[i]
+      );
+      const processedWaveForm = await processWaveForm(audioBuffer);
+      const res: SoundFile = {
+        file: files[i],
+        type: 'loop',
+        volume: 1,
+        audioBuffer: audioBuffer,
+        processedWaveForm: processedWaveForm,
+        remappedData: remapDataToTwoDimensionalMatrix(
+          processedWaveForm.channel,
+          processedWaveForm.stride,
+          processedWaveForm.tickCount
+        ).slice(0, processedWaveForm.stride / 2)
+      };
+      this._filesSubject$.next([...this._files, res]);
+
+      // return res;
+    }
+    // this._filesSubject$.next(soundFiles);
+  }
+
+  private async _addFiles(files: File[]) {
+    console.log('------------------------------------------------------------------');
+    const startTime = performance.now();
+    for (let i = 0; i < files.length; i++) {
+      const fileStartTime = performance.now();
+      const audioBuffer = await getSoundFileAudioBuffer(this.audioEngineService.audioEngine.masterContext, files[i]);
+      const processedWaveForm = await processWaveForm(audioBuffer);
+      const res: SoundFile = {
+        file: files[i],
+        type: 'loop',
+        volume: 1,
+        audioBuffer: audioBuffer,
+        processedWaveForm: processedWaveForm,
+        remappedData: remapDataToTwoDimensionalMatrix(
+          processedWaveForm.channel,
+          processedWaveForm.stride,
+          processedWaveForm.tickCount
+        ).slice(0, processedWaveForm.stride / 2)
+      };
+      this._filesSubject$.next([...this._files, res]);
+      const fileEndTime = performance.now();
+      // console.log('------------------------------------------------------------------');
+      // console.log(`Call to _addFiles took ${fileEndTime - fileStartTime} milliseconds`);
+      // console.log('res : ', res);
+      // console.log('res.res.audioBuffer.getChannelData(0) : ', res.audioBuffer.getChannelData(0));
+    }
+    const endTime = performance.now();
+    console.log(`Call to _addFiles took ${endTime - startTime} milliseconds`);
+    console.log('------------------------------------------------------------------');
+    // this._filesSubject$.next([...this._files, ...soundFiles]);
   }
 
   public get $files(): Observable<SoundFile[]> {
@@ -126,14 +176,5 @@ export class FilesService {
     //   //   input.click();
     //   // }
     // });
-  }
-
-  async selectImportedFile(file: File): Promise<void> {
-    this.currentFileService.setCurrentFile({
-      file: file,
-      type: 'oneShot',
-      volume: 1,
-      audioBuffer: await getSoundFileAudioBuffer(this.audioEngineService.audioEngine.masterContext, file)
-    });
   }
 }

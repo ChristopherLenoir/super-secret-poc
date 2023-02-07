@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { SoundPlayer } from '../../engine/core/SoundPlayer.class';
-import { SoundFile } from '../../engine/types/interfaces';
+import { ProcessedWaveForm, SoundFile } from '../../engine/types/interfaces';
 import { AudioEngineService } from '../audio-engine/audio-engine.service';
 
 @Injectable({
@@ -45,7 +45,9 @@ export class CurrentFileService {
       file: this._currentFile.file,
       type: 'oneShot',
       volume: 1,
-      audioBuffer: this._currentFile.audioBuffer
+      audioBuffer: this._currentFile.audioBuffer,
+      processedWaveForm: this._currentFile.processedWaveForm,
+      remappedData: this._currentFile.remappedData
     });
     this._soundPlayer.connect(this.audioEngineService.audioEngine.getChannelStrip('processing').input);
 
@@ -91,6 +93,14 @@ export class CurrentFileService {
 
   public getAudioBuffer(): AudioBuffer {
     return this._soundPlayer.getSoundBuffer(this._currentFile.file.name);
+  }
+
+  public getProcessedWaveForm(): ProcessedWaveForm {
+    return this._soundPlayer.getProcessedWaveForm(this._currentFile.file.name);
+  }
+
+  public getRemappedData(): number[][] {
+    return this._soundPlayer.getRemappedData(this._currentFile.file.name);
   }
 
   play() {

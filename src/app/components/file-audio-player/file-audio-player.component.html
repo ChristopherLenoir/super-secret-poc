@@ -1,17 +1,18 @@
-<div class="">
-  <p>
-    {{ (currentFileService.currentFile$ | async).name }}
-  </p>
-  <button (click)="play()">Play</button>
-  <button (click)="pause()">Pause</button>
-  <button (click)="stop()">Stop</button>
-  <div id="canvas-container" #canvasContainer>
-    <canvas id="amplitude-canvas" #amplitudeCanvas></canvas>
-    <br />
-    <canvas id="spectrogram-canvas" #spectrogramCanvas></canvas>
-  </div>
-  <p *ngIf="currentFileService.currentFile$ | async">
-    <!-- {{ currentFileService.getSoundCursor() | async | async }} -->
-    0 / {{ duration }}
-  </p>
+<p>
+  {{ (currentFileService.currentFile$ | async).name }}
+</p>
+<!-- <app-diy></app-diy> -->
+<!-- <app-lightning-chart></app-lightning-chart> -->
+<!-- <app-plotly-chart></app-plotly-chart> -->
+<app-expresscanvas-chart></app-expresscanvas-chart>
+
+<button (click)="play()">Play</button>
+<button (click)="pause()">Pause</button>
+<button (click)="stop()">Stop</button>
+<div id="canvas-container" #canvasContainer>
+  <canvas id="amplitude-canvas" #amplitudeCanvas></canvas>
 </div>
+<!-- <p *ngIf="currentFileService.currentFile$ | async">
+    {{ currentFileService.getSoundCursor() | async | async }}
+    0 / {{ duration$ | async }}
+  </p> -->

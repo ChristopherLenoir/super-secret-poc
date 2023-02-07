@@ -1,7 +1,7 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Effect } from '../types/abstractClasses';
 import { Channel } from '../types/abstractClasses/Channel.abstract.class';
-import { CustomAudioStructure, EffectOptions, SoundFile } from '../types/interfaces';
+import { CustomAudioStructure, EffectOptions, ProcessedWaveForm, SoundFile } from '../types/interfaces';
 import { Dic, SoundFilesLibrary } from '../types/types';
 import { clamp } from '../utils';
 
@@ -227,6 +227,26 @@ export class SoundPlayer {
 
     // return this._soundFilesLibrary[name].audioBuffer;
     return sound.audioBuffer;
+    // return this._audioElements[name].bufferSourceNode.buffer;
+  }
+
+  public getProcessedWaveForm(name: string): ProcessedWaveForm {
+    // await this._loadSound(name);
+
+    const sound: SoundFile = this._soundFilesLibrary[name];
+
+    // return this._soundFilesLibrary[name].audioBuffer;
+    return sound.processedWaveForm;
+    // return this._audioElements[name].bufferSourceNode.buffer;
+  }
+
+  public getRemappedData(name: string): number[][] {
+    // await this._loadSound(name);
+
+    const sound: SoundFile = this._soundFilesLibrary[name];
+
+    // return this._soundFilesLibrary[name].audioBuffer;
+    return sound.remappedData;
     // return this._audioElements[name].bufferSourceNode.buffer;
   }
 

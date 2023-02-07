@@ -21,7 +21,7 @@ export class ChannelStripService {
     // this.addEffect('Gate');
     // this.addEffect('Filter');
     // this.addEffect('Compressor');
-    // this.addEffect('Visualizer');
+    this.addEffect('Visualizer');
   }
 
   public get channelStrip() {

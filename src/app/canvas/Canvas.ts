@@ -29,7 +29,7 @@ export class Canvas {
 
   constructor(canvasRef) {
     this.canvas = canvasRef;
-    this.ctx = canvasRef.getContext('2d');
+    this.ctx = canvasRef.getContext('2d', { willReadFrequently: true });
   }
 
   set setFillColor(color: string) {
