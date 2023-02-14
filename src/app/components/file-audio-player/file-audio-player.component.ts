@@ -2,18 +2,24 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } fr
 // import Plotly from 'plotly.js';
 import { BehaviorSubject, fromEvent, Observable, Subscription } from 'rxjs';
 import { Canvas } from '../../canvas/Canvas';
-import { ProcessedWaveForm } from '../../engine/types/interfaces';
+import { ProcessedFFTData } from '../../engine/types/interfaces';
 import { AudioEngineService, CurrentFileService } from '../../services';
 
+type GraphType = 'diy' | 'lightningchart' | 'plotly' | 'canvasxpress';
 @Component({
   selector: 'app-file-audio-player',
   templateUrl: './file-audio-player.component.html',
   styleUrls: ['./file-audio-player.component.scss']
 })
 export class FileAudioPlayerComponent implements OnInit, AfterViewInit, OnDestroy, AfterViewInit {
+  public graphType: GraphType = 'plotly';
+  public setGraphType(graphType: GraphType): void {
+    this.graphType = graphType;
+  }
+
   private audioBuffer: AudioBuffer;
   private leftChannelData: Float32Array;
-  private processedWaveForm: ProcessedWaveForm;
+  private processedFFTData: ProcessedFFTData;
   private remappedData: number[][];
   private amplitudeBufferImageData: ImageData;
   // private spectrogramBufferImageData: ImageData;
@@ -50,7 +56,7 @@ export class FileAudioPlayerComponent implements OnInit, AfterViewInit, OnDestro
     //   this.amplitudeCanvas.resize(this.canvasContainerRef.nativeElement.clientWidth, this.amplitudeCanvasHeight);
     //   this.audioBuffer = this.currentFileService.getAudioBuffer();
     //   this.leftChannelData = this.audioBuffer.getChannelData(0);
-    //   this.processedWaveForm = this.currentFileService.getProcessedWaveForm();
+    //   this.processedFFTData = this.currentFileService.getProcessedFFTData();
     //   this.remappedData = this.currentFileService.getRemappedData();
     //   this.durationSubject$.next(this.currentFileService.getSoundDuration());
     //   this.startedAt = this.currentFileService.getStartedAt();
@@ -69,7 +75,7 @@ export class FileAudioPlayerComponent implements OnInit, AfterViewInit, OnDestro
     //     if (soundFile.audioBuffer != this.audioBuffer) {
     //       this.audioBuffer = this.currentFileService.getAudioBuffer();
     //       this.leftChannelData = this.audioBuffer.getChannelData(0);
-    //       this.processedWaveForm = this.currentFileService.getProcessedWaveForm();
+    //       this.processedFFTData = this.currentFileService.getProcessedFFTData();
     //       this.remappedData = this.currentFileService.getRemappedData();
     //       this.durationSubject$.next(this.currentFileService.getSoundDuration());
     //       this.startedAt = this.currentFileService.getStartedAt();
@@ -86,7 +92,7 @@ export class FileAudioPlayerComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   private _draw() {
-    // this.amplitudeCanvas.background();
+    this.amplitudeCanvas.background();
     // // this.spectrogramCanvas.background();
 
     // if (!this.amplitudeBufferImageData) {

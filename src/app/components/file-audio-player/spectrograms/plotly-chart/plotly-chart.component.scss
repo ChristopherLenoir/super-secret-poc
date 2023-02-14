@@ -1,0 +1,9 @@
+#canvas-container {
+  position: relative;
+
+  #canvas-overlay {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+  }
+}

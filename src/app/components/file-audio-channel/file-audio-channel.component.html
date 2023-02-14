@@ -1,4 +1,4 @@
-<p>
+<!-- <p>
   <button (click)="openAddEffectDialog()">Add effect</button>
 </p>
 <div cdkDropList cdkDropListOrientation="horizontal" class="example-list" (cdkDropListDropped)="drop($event)">
@@ -21,8 +21,6 @@
       {{ effect.name }}
     </div>
 
-    <!-- <div>component</div> -->
-    <!-- <p>{{ effectIndex | json }}</p> -->
     <app-filter-effect
       *ngIf="effect.name == 'Filter'"
       [effect]="effect"
@@ -37,4 +35,4 @@
     <app-compressor-effect *ngIf="effect.name == 'Compressor'" [effect]="effect" [effectIndex]="effectIndex">
     </app-compressor-effect>
   </div>
-</div>
+</div> -->

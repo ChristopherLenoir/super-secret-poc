@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { SoundPlayer } from '../../engine/core/SoundPlayer.class';
-import { ProcessedWaveForm, SoundFile } from '../../engine/types/interfaces';
+import { ProcessedFFTData, SoundFile } from '../../engine/types/interfaces';
 import { AudioEngineService } from '../audio-engine/audio-engine.service';
 
 @Injectable({
@@ -46,9 +46,14 @@ export class CurrentFileService {
       type: 'oneShot',
       volume: 1,
       audioBuffer: this._currentFile.audioBuffer,
-      processedWaveForm: this._currentFile.processedWaveForm,
+      processedFFTData: this._currentFile.processedFFTData,
       remappedData: this._currentFile.remappedData
     });
+    console.log('this.audioEngineService.audioEngine : ', this.audioEngineService.audioEngine);
+    console.log(
+      "this.audioEngineService.audioEngine.getChannelStrip('processing') : ",
+      this.audioEngineService.audioEngine.getChannelStrip('processing')
+    );
     this._soundPlayer.connect(this.audioEngineService.audioEngine.getChannelStrip('processing').input);
 
     this._currentFileSubject$.next(file);
@@ -95,8 +100,8 @@ export class CurrentFileService {
     return this._soundPlayer.getSoundBuffer(this._currentFile.file.name);
   }
 
-  public getProcessedWaveForm(): ProcessedWaveForm {
-    return this._soundPlayer.getProcessedWaveForm(this._currentFile.file.name);
+  public getProcessedFFTData(): ProcessedFFTData {
+    return this._soundPlayer.getProcessedFFTData(this._currentFile.file.name);
   }
 
   public getRemappedData(): number[][] {

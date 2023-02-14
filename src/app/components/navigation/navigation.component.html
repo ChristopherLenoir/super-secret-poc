@@ -16,8 +16,8 @@
       <a
         mat-list-item
         *ngFor="let file of filesService.$files | async; let fileIndex = index"
-        (click)="selectFile(file.file)"
-        >{{ file.file.name }}</a
+        (click)="selectFile(file)"
+        >{{ file.name }}</a
       >
     </mat-nav-list>
   </mat-sidenav>

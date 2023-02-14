@@ -1,9 +1,18 @@
+<!-- <div>
+  <button (click)="toggleOveray()">Overlay - {{ isOverlayActive }}</button> | zoomRatio {{ zoomRatio }} | measurement
+  {{ measurement }}s
+</div> -->
+
 <div id="canvas-container" #canvasContainer>
   <plotly-plot
     *ngIf="isPlotlySetUp"
     [data]="plotlyGraph.data"
     [layout]="plotlyGraph.layout"
+    (relayout)="plotlyRelayout($event)"
     [config]="plotlyGraph.config"
     [updateOnDataChange]="true"
   ></plotly-plot>
+  <!-- <div *ngIf="isOverlayActive" id="canvas-overlay" #canvasOverlay>Overlay</div> -->
+  <canvas *ngIf="isOverlayActive" id="canvas-overlay" #canvasOverlay></canvas>
+  <!-- <canvas id="spectrogramCanvas" #spectrogramCanvas></canvas> -->
 </div>

@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { fromEvent, Observable, Subscription } from 'rxjs';
 import { Canvas } from '../../../../canvas/Canvas';
-import { ProcessedWaveForm } from '../../../../engine/types/interfaces';
+import { ProcessedFFTData } from '../../../../engine/types/interfaces';
 import { AudioEngineService, CurrentFileService } from '../../../../services';
 
 @Component({
@@ -18,7 +18,7 @@ export class DiyComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private audioBuffer: AudioBuffer;
   private leftChannelData: Float32Array;
-  private processedWaveForm: ProcessedWaveForm;
+  private processedFFTData: ProcessedFFTData;
   private remappedData: number[][];
   private spectrogramBufferImageData: ImageData;
 
@@ -39,7 +39,7 @@ export class DiyComponent implements OnInit, OnDestroy, AfterViewInit {
       if (soundFile.audioBuffer != this.audioBuffer) {
         this.audioBuffer = this.currentFileService.getAudioBuffer();
         this.leftChannelData = this.audioBuffer.getChannelData(0);
-        this.processedWaveForm = this.currentFileService.getProcessedWaveForm();
+        this.processedFFTData = this.currentFileService.getProcessedFFTData();
         this.remappedData = this.currentFileService.getRemappedData();
 
         // this.playbackRate = this.currentFileService.getPlaybackRate();

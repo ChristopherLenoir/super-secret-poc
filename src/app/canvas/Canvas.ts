@@ -1,25 +1,3 @@
-// TO DO : Request animation frame everywhere drawing
-
-export function waitForNextFrame(): Promise<void> {
-  return new Promise(resolve => {
-    // requestAnimationFrame(time => {
-    //   console.log('requestAnimationFrame : time : ', time);
-    //   resolve();
-    // });
-    setTimeout(() => {
-      resolve();
-    }, 1000);
-  });
-}
-
-export function dummyPromise(): Promise<void> {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve();
-    }, 1000 / 10);
-  });
-}
-
 export class Canvas {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
@@ -41,6 +19,7 @@ export class Canvas {
   }
 
   resize(width: number, height: number = width): void {
+    console.log('resize : ', width, height);
     this.canvas.width = width;
     this.canvas.height = height;
   }
@@ -65,6 +44,7 @@ export class Canvas {
     color: string = this.strokeColor,
     strokeWeight: number = 1
   ): void {
+    this.ctx.beginPath();
     this.ctx.strokeStyle = color;
     this.ctx.moveTo(ax, ay);
     this.ctx.lineTo(bx, by);
@@ -93,10 +73,22 @@ export class Canvas {
     this.ctx.fillRect(x, y, width, height);
   }
 
-  background(color: string = this.fillColor): void {
+  drawText(text: string, x: number, y: number, color: string = this.fillColor, size: number = 12) {
+    this.ctx.font = `${size}px serif`;
     this.ctx.fillStyle = color;
+    this.ctx.fillText(text, x, y);
+  }
+
+  background(color: string = this.fillColor, alpha: number = 1): void {
+    this.ctx.fillStyle = color;
+    this.ctx.globalAlpha = alpha;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.globalAlpha = 1;
     // this.ctx.fillRect(this.canvas.width, this.canvas.height, 0, 0);
+  }
+
+  clearCanvas(): void {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
   // TO DO : Save state and draw saved state functions

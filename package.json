@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --ssl",
+    "start": "ng serve --ssl --port 4242",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -23,8 +23,6 @@
     "@arction/lcjs": "^3.4.0",
     "angular-plotly.js": "^4.0.4",
     "canvasxpress": "^41.9.5",
-    "crypto-browserify": "^3.12.0",
-    "crypto-js": "^4.1.1",
     "font-awesome": "^4.7.0",
     "plotly.js-dist-min": "^2.18.1",
     "rxjs": "~7.4.0",

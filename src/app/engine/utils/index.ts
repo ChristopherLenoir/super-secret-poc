@@ -1,4 +1,4 @@
-import { ProcessedWaveForm } from '../types/interfaces';
+import { ProcessedFFTData } from '../types/interfaces';
 
 export * as acceleration from './acceleration';
 export * as audioWorklets from './audioWorklets';
@@ -29,11 +29,17 @@ export function intensityDataToDb(intensity: number, minDecibels: number, maxDec
  * @return {type} Return value description.
  */
 export async function getSoundFileAudioBuffer(context: AudioContext, file: File): Promise<AudioBuffer> {
+  console.log('file : ', file);
+  const startTime = performance.now();
+  // TO DO
   return await new Promise((resolve, reject) => {
     const fileReader = new FileReader();
     fileReader.onload = (ev: ProgressEvent<FileReader>) => {
       // TO DO : Error handling
       context.decodeAudioData(ev.target.result as ArrayBuffer).then((soundBuffer: AudioBuffer) => {
+        const endTime = performance.now();
+        console.log(`Call to getSoundFileAudioBuffer took ${endTime - startTime} milliseconds`);
+        console.log('------------------------------------------------------------------');
         resolve(soundBuffer);
       });
     };
@@ -57,10 +63,11 @@ export async function processWaveForm(
   fftSize: number = 512,
   // fftSize: number = 128,
   smoothingTimeConstant: number = 0.8,
-  // processorBufferSize: number = 2048
-  processorBufferSize: number = 256
-): Promise<ProcessedWaveForm> {
-  console.log('!?! : audioBuffer : ', audioBuffer);
+  processorBufferSize: number = 2048
+  // processorBufferSize: number = 256
+): Promise<ProcessedFFTData> {
+  const startTime = performance.now();
+
   // Create a new OfflineAudioContext with information from the pre-created audioBuffer
   // The OfflineAudioContext can be used to process a audio file as fast as possible.
   // Normal AudioContext would process the file at the speed of playback.
@@ -94,9 +101,11 @@ export async function processWaveForm(
   processor.onaudioprocess = ev => {
     // Run FFT
 
-    console.log('tick : offset : ', offset);
+    // console.log('tick : offset : ', offset);
 
     const freqData = new Uint8Array(channelFFtDataBuffer.buffer, offset, generalAnalyzer.frequencyBinCount);
+    // console.log('freqData : ', freqData);
+
     generalAnalyzer.getByteFrequencyData(freqData);
     offset += generalAnalyzer.frequencyBinCount;
   };
@@ -112,6 +121,9 @@ export async function processWaveForm(
 
   // Process the audio buffer
   await offlineCtx.startRendering();
+  const endTime = performance.now();
+  console.log(`Call to processWaveForm took ${endTime - startTime} milliseconds`);
+  console.log('------------------------------------------------------------------');
   return {
     channel: channelFFtDataBuffer,
     channelDbRange: channelDbRange,
@@ -122,7 +134,12 @@ export async function processWaveForm(
   };
 }
 
-export function remapDataToTwoDimensionalMatrix(data, strideSize, tickCount): number[][] {
+export function remapDataToTwoDimensionalMatrixForExpressCanvas(
+  data,
+  strideSize: number,
+  tickCount: number
+): number[][] {
+  const startTime = performance.now();
   /**
    * @type {Array<number>}
    */
@@ -143,5 +160,43 @@ export function remapDataToTwoDimensionalMatrix(data, strideSize, tickCount): nu
     }
   }
 
+  const endTime = performance.now();
+  console.log(`Call to remapDataToTwoDimensionalMatrixForExpressCanvas took ${endTime - startTime} milliseconds`);
+  console.log('------------------------------------------------------------------');
+  return output;
+}
+
+export function remapDataToTwoDimensionalMatrix(
+  data,
+  strideSize: number,
+  tickCount: number,
+  minDecibels: number,
+  maxDecibels: number
+): number[][] {
+  const startTime = performance.now();
+  /**
+   * @type {Array<number>}
+   */
+  const arr: number[] = Array.from(data);
+
+  // Map the one dimensional data to two dimensional data where data goes from right to left
+  // [1, 2, 3, 4, 5, 6]
+  // -> strideSize = 2
+  // -> rowCount = 3
+  // maps to
+  // [1, 4]
+  // [2, 5]
+  // [3, 6]
+  const output = Array.from(Array(strideSize)).map(() => Array.from(Array(tickCount)));
+  for (let row = 0; row < strideSize; row += 1) {
+    for (let col = 0; col < tickCount; col += 1) {
+      // output[row][col] = arr[col * strideSize + row];
+      output[row][col] = intensityDataToDb(arr[col * strideSize + row], minDecibels, maxDecibels);
+    }
+  }
+
+  const endTime = performance.now();
+  console.log(`Call to remapDataToTwoDimensionalMatrix took ${endTime - startTime} milliseconds`);
+  console.log('------------------------------------------------------------------');
   return output;
 }

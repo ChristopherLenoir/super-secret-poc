@@ -1,10 +1,18 @@
+<!-- <div>
+  <button (click)="setGraphType('diy')">DIY</button>
+  <button (click)="setGraphType('lightningchart')">Lightning Charts</button>
+  <button (click)="setGraphType('plotly')">Plotly</button>
+  <button (click)="setGraphType('canvasxpress')">CanvasXpress</button>
+</div> -->
 <p>
   {{ (currentFileService.currentFile$ | async).name }}
 </p>
-<!-- <app-diy></app-diy> -->
-<!-- <app-lightning-chart></app-lightning-chart> -->
-<!-- <app-plotly-chart></app-plotly-chart> -->
-<app-expresscanvas-chart></app-expresscanvas-chart>
+<!-- <app-diy *ngIf="graphType == 'diy'"></app-diy>
+<app-lightning-chart *ngIf="graphType == 'lightningchart'"></app-lightning-chart> -->
+<app-plotly-chart *ngIf="graphType == 'plotly'"></app-plotly-chart>
+<!-- <app-expresscanvas-chart *ngIf="graphType == 'canvasxpress'"></app-expresscanvas-chart> -->
+
+<br />
 
 <button (click)="play()">Play</button>
 <button (click)="pause()">Pause</button>
@@ -13,6 +21,6 @@
   <canvas id="amplitude-canvas" #amplitudeCanvas></canvas>
 </div>
 <!-- <p *ngIf="currentFileService.currentFile$ | async">
-    {{ currentFileService.getSoundCursor() | async | async }}
-    0 / {{ duration$ | async }}
-  </p> -->
+  {{ currentFileService.getSoundCursor() | async | async }}
+  0 / {{ duration$ | async }}
+</p> -->

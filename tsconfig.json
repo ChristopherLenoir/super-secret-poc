@@ -2,6 +2,8 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "strict": false,
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
@@ -26,9 +28,6 @@
     "strictPropertyInitialization": false,
     "noImplicitAny": false,
     "strictNullChecks": false,
-    "paths": {
-      "crypto": ["node_modules/crypto-js"]
-    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

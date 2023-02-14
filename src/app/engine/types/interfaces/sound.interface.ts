@@ -16,8 +16,9 @@ export interface SoundFile {
   type: SoundType;
   volume: number;
   audioBuffer: AudioBuffer;
-  processedWaveForm: ProcessedWaveForm;
+  processedFFTData: ProcessedFFTData;
   remappedData: number[][];
+  // remappedDataForExpressCanvas: number[][];
 }
 
 /**
@@ -38,7 +39,7 @@ export interface CustomAudioStructure {
   // mediaElementAudioSourceNode: MediaElementAudioSourceNode;
 }
 
-export interface ProcessedWaveForm {
+export interface ProcessedFFTData {
   channel: Uint8Array;
   channelDbRange: {
     minDecibels: number;

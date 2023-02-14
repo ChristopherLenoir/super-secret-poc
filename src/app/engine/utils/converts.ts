@@ -32,6 +32,13 @@ export function equalPowerScale(percent: number): number {
 }
 
 /**
+ * Define function that maps Uint8 [0, 255] to Decibels.
+ */
+export function intensityDataToDb(intensity: number, minDecibels: number, maxDecibels: number): number {
+  return minDecibels + (intensity / 255) * (maxDecibels - minDecibels);
+}
+
+/**
  * Convert decibels into gain.
  */
 export function dbToGain(db: number): number {

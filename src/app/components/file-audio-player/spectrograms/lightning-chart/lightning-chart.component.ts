@@ -11,7 +11,7 @@ import {
   PalettedFill
 } from '@arction/lcjs';
 import { fromEvent, Observable, Subscription } from 'rxjs';
-import { ProcessedWaveForm } from '../../../../engine/types/interfaces';
+import { ProcessedFFTData } from '../../../../engine/types/interfaces';
 import { intensityDataToDb } from '../../../../engine/utils';
 import { CurrentFileService } from '../../../../services';
 
@@ -28,7 +28,7 @@ export class LightningChartComponent implements OnInit, OnDestroy, AfterViewInit
   private _fileSelectionSubscription: Subscription;
 
   private audioBuffer: AudioBuffer;
-  private processedWaveForm: ProcessedWaveForm;
+  private processedFFTData: ProcessedFFTData;
   private remappedData: number[][];
 
   @ViewChild('canvasContainer', { static: true }) canvasContainerRef: ElementRef<HTMLCanvasElement>;
@@ -55,7 +55,7 @@ export class LightningChartComponent implements OnInit, OnDestroy, AfterViewInit
     this._fileSelectionSubscription = this.currentFileService.currentFile$.subscribe(async soundFile => {
       if (soundFile.audioBuffer != this.audioBuffer) {
         this.audioBuffer = this.currentFileService.getAudioBuffer();
-        this.processedWaveForm = this.currentFileService.getProcessedWaveForm();
+        this.processedFFTData = this.currentFileService.getProcessedFFTData();
         this.remappedData = this.currentFileService.getRemappedData();
 
         this.isChartSetUp = false;
@@ -113,18 +113,18 @@ export class LightningChartComponent implements OnInit, OnDestroy, AfterViewInit
     };
     // End position of the heatmap
     const end = {
-      x: this.processedWaveForm.duration,
+      x: this.processedFFTData.duration,
       // Use half of the fft data range
-      y: Math.ceil(this.processedWaveForm.maxFreq / 2)
+      y: Math.ceil(this.processedFFTData.maxFreq / 2)
     };
 
     // Create the series
     const series = this.chart
       .addHeatmapGridSeries({
         // Data columns, defines horizontal resolution
-        columns: this.processedWaveForm.tickCount,
+        columns: this.processedFFTData.tickCount,
         // Use half of the fft data range
-        rows: Math.ceil(this.processedWaveForm.stride / 2),
+        rows: Math.ceil(this.processedFFTData.stride / 2),
         // Start position, defines where one of the corners for hetmap is
         start,
         // End position, defines the opposite corner of the start corner
@@ -143,8 +143,8 @@ export class LightningChartComponent implements OnInit, OnDestroy, AfterViewInit
                 label: `${Math.round(
                   intensityDataToDb(
                     255 * (0 / 6),
-                    this.processedWaveForm.channelDbRange.minDecibels,
-                    this.processedWaveForm.channelDbRange.maxDecibels
+                    this.processedFFTData.channelDbRange.minDecibels,
+                    this.processedFFTData.channelDbRange.maxDecibels
                   )
                 )}`
               },
@@ -154,8 +154,8 @@ export class LightningChartComponent implements OnInit, OnDestroy, AfterViewInit
                 label: `${Math.round(
                   intensityDataToDb(
                     255 * (1 / 6),
-                    this.processedWaveForm.channelDbRange.minDecibels,
-                    this.processedWaveForm.channelDbRange.maxDecibels
+                    this.processedFFTData.channelDbRange.minDecibels,
+                    this.processedFFTData.channelDbRange.maxDecibels
                   )
                 )}`
               },
@@ -165,8 +165,8 @@ export class LightningChartComponent implements OnInit, OnDestroy, AfterViewInit
                 label: `${Math.round(
                   intensityDataToDb(
                     255 * (2 / 6),
-                    this.processedWaveForm.channelDbRange.minDecibels,
-                    this.processedWaveForm.channelDbRange.maxDecibels
+                    this.processedFFTData.channelDbRange.minDecibels,
+                    this.processedFFTData.channelDbRange.maxDecibels
                   )
                 )}`
               },
@@ -176,8 +176,8 @@ export class LightningChartComponent implements OnInit, OnDestroy, AfterViewInit
                 label: `${Math.round(
                   intensityDataToDb(
                     255 * (3 / 6),
-                    this.processedWaveForm.channelDbRange.minDecibels,
-                    this.processedWaveForm.channelDbRange.maxDecibels
+                    this.processedFFTData.channelDbRange.minDecibels,
+                    this.processedFFTData.channelDbRange.maxDecibels
                   )
                 )}`
               },
@@ -187,8 +187,8 @@ export class LightningChartComponent implements OnInit, OnDestroy, AfterViewInit
                 label: `${Math.round(
                   intensityDataToDb(
                     255 * (4 / 6),
-                    this.processedWaveForm.channelDbRange.minDecibels,
-                    this.processedWaveForm.channelDbRange.maxDecibels
+                    this.processedFFTData.channelDbRange.minDecibels,
+                    this.processedFFTData.channelDbRange.maxDecibels
                   )
                 )}`
               },
@@ -198,8 +198,8 @@ export class LightningChartComponent implements OnInit, OnDestroy, AfterViewInit
                 label: `${Math.round(
                   intensityDataToDb(
                     255 * (5 / 6),
-                    this.processedWaveForm.channelDbRange.minDecibels,
-                    this.processedWaveForm.channelDbRange.maxDecibels
+                    this.processedFFTData.channelDbRange.minDecibels,
+                    this.processedFFTData.channelDbRange.maxDecibels
                   )
                 )}`
               },
@@ -209,8 +209,8 @@ export class LightningChartComponent implements OnInit, OnDestroy, AfterViewInit
                 label: `${Math.round(
                   intensityDataToDb(
                     255 * (6 / 6),
-                    this.processedWaveForm.channelDbRange.minDecibels,
-                    this.processedWaveForm.channelDbRange.maxDecibels
+                    this.processedFFTData.channelDbRange.minDecibels,
+                    this.processedFFTData.channelDbRange.maxDecibels
                   )
                 )}`
               }
@@ -230,8 +230,8 @@ export class LightningChartComponent implements OnInit, OnDestroy, AfterViewInit
             '',
             intensityDataToDb(
               dataPoint.intensity,
-              this.processedWaveForm.channelDbRange.minDecibels,
-              this.processedWaveForm.channelDbRange.maxDecibels
+              this.processedFFTData.channelDbRange.minDecibels,
+              this.processedFFTData.channelDbRange.maxDecibels
             ).toFixed(1) + ' dB'
           )
       );
@@ -254,12 +254,12 @@ export class LightningChartComponent implements OnInit, OnDestroy, AfterViewInit
     // // TO DO : le remappedData dans le audioFIle
     // // Setup the data for the chart
     // const remappedData = remapDataToTwoDimensionalMatrix(
-    //   this.processedWaveForm.channel,
-    //   this.processedWaveForm.stride,
-    //   this.processedWaveForm.tickCount
+    //   this.processedFFTData.channel,
+    //   this.processedFFTData.stride,
+    //   this.processedFFTData.tickCount
     // )
     //   // Slice only first half of data (rest are 0s).
-    //   .slice(0, this.processedWaveForm.stride / 2);
+    //   .slice(0, this.processedFFTData.stride / 2);
 
     // Set the heatmap data
     series.invalidateIntensityValues({

@@ -1,7 +1,7 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Effect } from '../types/abstractClasses';
 import { Channel } from '../types/abstractClasses/Channel.abstract.class';
-import { CustomAudioStructure, EffectOptions, ProcessedWaveForm, SoundFile } from '../types/interfaces';
+import { CustomAudioStructure, EffectOptions, ProcessedFFTData, SoundFile } from '../types/interfaces';
 import { Dic, SoundFilesLibrary } from '../types/types';
 import { clamp } from '../utils';
 
@@ -230,13 +230,13 @@ export class SoundPlayer {
     // return this._audioElements[name].bufferSourceNode.buffer;
   }
 
-  public getProcessedWaveForm(name: string): ProcessedWaveForm {
+  public getProcessedFFTData(name: string): ProcessedFFTData {
     // await this._loadSound(name);
 
     const sound: SoundFile = this._soundFilesLibrary[name];
 
     // return this._soundFilesLibrary[name].audioBuffer;
-    return sound.processedWaveForm;
+    return sound.processedFFTData;
     // return this._audioElements[name].bufferSourceNode.buffer;
   }
 

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { SoundFile } from '../../engine/types/interfaces';
 import { getSoundFileAudioBuffer, processWaveForm, remapDataToTwoDimensionalMatrix } from '../../engine/utils';
 import { FileSystemFileHandle } from '../../types';
 import { AudioEngineService } from '../audio-engine/audio-engine.service';
@@ -10,97 +9,133 @@ import { CurrentFileService } from '../current-file/current-file.service';
   providedIn: 'root'
 })
 export class FilesService {
-  private _filesSubject$: BehaviorSubject<SoundFile[]>;
+  private _filesSubject$: BehaviorSubject<File[]>;
 
   constructor(private audioEngineService: AudioEngineService, private currentFileService: CurrentFileService) {
-    this._filesSubject$ = new BehaviorSubject<SoundFile[]>([]);
+    this._filesSubject$ = new BehaviorSubject<File[]>([]);
   }
+
+  public get $files(): Observable<File[]> {
+    return this._filesSubject$.asObservable();
+  }
+
   private get _files() {
     return this._filesSubject$.getValue();
   }
 
   async selectImportedFile(file: File): Promise<void> {
+    // [1, 2, 3, 4, 5, 6]
+    // -> strideSize = 2
+    // -> rowCount = 3
+    // console.log(
+    //   'remapDataToTwoDimensionalMatrix([1, 2, 3, 4, 5, 6], 2, 3) : ',
+    //   remapDataToTwoDimensionalMatrix([1, 2, 3, 4, 5, 6], 2, 3)
+    // );
+    // console.log(
+    //   'remapDataToTwoDimensionalMatrixForExpressCanvas([1, 2, 3, 4, 5, 6], 2, 3) : ',
+    //   remapDataToTwoDimensionalMatrixForExpressCanvas([1, 2, 3, 4, 5, 6], 2, 3)
+    // );
+
+    console.log(', file : ', file);
+
     const audioBuffer: AudioBuffer = await getSoundFileAudioBuffer(
       this.audioEngineService.audioEngine.masterContext,
       file
     );
-    const processedWaveForm = await processWaveForm(audioBuffer);
+    const processedFFTData = await processWaveForm(audioBuffer);
     this.currentFileService.setCurrentFile({
       file: file,
       type: 'oneShot',
       volume: 1,
       audioBuffer: audioBuffer,
-      processedWaveForm: processedWaveForm,
+      processedFFTData: processedFFTData,
       remappedData: remapDataToTwoDimensionalMatrix(
-        processedWaveForm.channel,
-        processedWaveForm.stride,
-        processedWaveForm.tickCount
-      ).slice(0, processedWaveForm.stride / 2)
+        processedFFTData.channel,
+        processedFFTData.stride,
+        processedFFTData.tickCount,
+        processedFFTData.channelDbRange.minDecibels,
+        processedFFTData.channelDbRange.maxDecibels
+      )
     });
   }
 
-  private async _setFiles(files: File[]) {
-    for (let i = 0; i < files.length; i++) {
-      const audioBuffer: AudioBuffer = await getSoundFileAudioBuffer(
-        this.audioEngineService.audioEngine.masterContext,
-        files[i]
-      );
-      const processedWaveForm = await processWaveForm(audioBuffer);
-      const res: SoundFile = {
-        file: files[i],
-        type: 'loop',
-        volume: 1,
-        audioBuffer: audioBuffer,
-        processedWaveForm: processedWaveForm,
-        remappedData: remapDataToTwoDimensionalMatrix(
-          processedWaveForm.channel,
-          processedWaveForm.stride,
-          processedWaveForm.tickCount
-        ).slice(0, processedWaveForm.stride / 2)
-      };
-      this._filesSubject$.next([...this._files, res]);
+  // private async _setFiles(files: File[]) {
+  //   this._filesSubject$.next(files);
 
-      // return res;
-    }
-    // this._filesSubject$.next(soundFiles);
-  }
+  //   // for (let i = 0; i < files.length; i++) {
+  //   // const audioBuffer: AudioBuffer = await getSoundFileAudioBuffer(
+  //   //   this.audioEngineService.audioEngine.masterContext,
+  //   //   files[i]
+  //   // );
+  //   // const processedFFTData = await processWaveForm(audioBuffer);
+  //   // const res: SoundFile = {
+  //   //   file: files[i],
+  //   //   type: 'loop',
+  //   //   volume: 1,
+  //   //   audioBuffer: audioBuffer,
+  //   //   processedFFTData: processedFFTData,
+  //   //   remappedData: remapDataToTwoDimensionalMatrix(
+  //   //     processedFFTData.channel,
+  //   //     processedFFTData.stride,
+  //   //     processedFFTData.tickCount
+  //   //   ).slice(0, processedFFTData.stride / 2),
+  //   //   remappedDataForExpressCanvas: remapDataToTwoDimensionalMatrixForExpressCanvas(
+  //   //     processedFFTData.channel,
+  //   //     processedFFTData.stride,
+  //   //     processedFFTData.tickCount
+  //   //   ).slice(0, processedFFTData.stride / 2)
+  //   // };
+  //   // this._filesSubject$.next([...this._files, files[i]]);
 
+  //   // return res;
+  //   // }
+  //   // this._filesSubject$.next(soundFiles);
+  // }
+
+  // TO DO : Desactiver le loading du fichier
   private async _addFiles(files: File[]) {
     console.log('------------------------------------------------------------------');
-    const startTime = performance.now();
-    for (let i = 0; i < files.length; i++) {
-      const fileStartTime = performance.now();
-      const audioBuffer = await getSoundFileAudioBuffer(this.audioEngineService.audioEngine.masterContext, files[i]);
-      const processedWaveForm = await processWaveForm(audioBuffer);
-      const res: SoundFile = {
-        file: files[i],
-        type: 'loop',
-        volume: 1,
-        audioBuffer: audioBuffer,
-        processedWaveForm: processedWaveForm,
-        remappedData: remapDataToTwoDimensionalMatrix(
-          processedWaveForm.channel,
-          processedWaveForm.stride,
-          processedWaveForm.tickCount
-        ).slice(0, processedWaveForm.stride / 2)
-      };
-      this._filesSubject$.next([...this._files, res]);
-      const fileEndTime = performance.now();
-      // console.log('------------------------------------------------------------------');
-      // console.log(`Call to _addFiles took ${fileEndTime - fileStartTime} milliseconds`);
-      // console.log('res : ', res);
-      // console.log('res.res.audioBuffer.getChannelData(0) : ', res.audioBuffer.getChannelData(0));
-    }
-    const endTime = performance.now();
-    console.log(`Call to _addFiles took ${endTime - startTime} milliseconds`);
+    // const startTime = performance.now();
+    console.log('files : ', files);
+    console.log('this._files : before : ', this._files);
+    this._filesSubject$.next([...this._files, ...files]);
+    console.log('this._files : after : ', this._files);
+
+    // for (let i = 0; i < files.length; i++) {
+    //   // const fileStartTime = performance.now();
+    //   // const audioBuffer = await getSoundFileAudioBuffer(this.audioEngineService.audioEngine.masterContext, files[i]);
+    //   // const processedFFTData = await processWaveForm(audioBuffer);
+    //   // const res: SoundFile = {
+    //   //   file: files[i],
+    //   //   type: 'loop',
+    //   //   volume: 1,
+    //   //   audioBuffer: audioBuffer,
+    //   //   processedFFTData: processedFFTData,
+    //   //   remappedData: remapDataToTwoDimensionalMatrix(
+    //   //     processedFFTData.channel,
+    //   //     processedFFTData.stride,
+    //   //     processedFFTData.tickCount
+    //   //   ).slice(0, processedFFTData.stride / 2),
+    //   //   remappedDataForExpressCanvas: remapDataToTwoDimensionalMatrixForExpressCanvas(
+    //   //     processedFFTData.channel,
+    //   //     processedFFTData.stride,
+    //   //     processedFFTData.tickCount
+    //   //   )
+    //   // };
+    //   this._filesSubject$.next([...this._files, files[i]]);
+    //   // const fileEndTime = performance.now();
+    //   // console.log('------------------------------------------------------------------');
+    //   // console.log(`Call to _addFiles took ${fileEndTime - fileStartTime} milliseconds`);
+    //   // console.log('res : ', res);
+    //   // console.log('res.res.audioBuffer.getChannelData(0) : ', res.audioBuffer.getChannelData(0));
+    // }
+    // const endTime = performance.now();
+    // console.log(`Call to _addFiles took ${endTime - startTime} milliseconds`);
     console.log('------------------------------------------------------------------');
     // this._filesSubject$.next([...this._files, ...soundFiles]);
   }
 
-  public get $files(): Observable<SoundFile[]> {
-    return this._filesSubject$.asObservable();
-  }
-
+  // TO DO : Desactiver le loading du fichier
   // TO DO : Check if file is already open
   async openFileOrFiles(multiple = false) {
     // file extension check
@@ -134,14 +169,6 @@ export class FilesService {
       const filesToAdd: File[] = await Promise.all(
         fileOrFiles.map(async fileHandle => {
           return await fileHandle.getFile();
-          // return {
-          //   name: fileHandle.name,
-          //   path: '',
-          //   extension: fileHandle.name.substring(fileHandle.name.lastIndexOf('.') + 1, fileHandle.name.length),
-          //   fileSystemFileHandle: fileHandle,
-          //   // get file contents
-          //   fileData: await fileHandle.getFile()
-          // };
         })
       );
 
